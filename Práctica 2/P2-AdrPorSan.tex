@@ -1,0 +1,905 @@
+%%
+% Modificación de una plantilla de Latex para adaptarla al castellano.
+%%
+
+%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[a4paper, 11pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage[usenames,dvipsnames]{color} % Coloring code
+\usepackage{wrapfig} % Allows in-line images
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{enumitem}
+
+% Imágenes
+\usepackage{graphicx} 
+
+\usepackage{amsmath}
+% para importar svg
+%\usepackage[generate=all]{svgfig}
+
+% sudo apt-get install texlive-lang-spanish
+\usepackage[spanish]{babel} % English language/hyphenation
+\selectlanguage{spanish}
+% Hay que pelearse con babel-spanish para el alineamiento del punto decimal
+\decimalpoint
+\usepackage{dcolumn}
+\newcolumntype{d}[1]{D{.}{\esperiod}{#1}}
+\makeatletter
+\addto\shorthandsspanish{\let\esperiod\es@period@code}
+\makeatother
+
+\usepackage{longtable}
+\usepackage{tabu}
+\usepackage{supertabular}
+
+\usepackage{multicol}
+\newsavebox\ltmcbox
+
+% Para algoritmos
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsthm}
+
+% Para matrices
+\usepackage{amsmath}
+
+% Símbolos matemáticos
+\usepackage{amssymb}
+\usepackage{accents}
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+
+\usepackage[hidelinks]{hyperref}
+
+\usepackage[section]{placeins} % Para gráficas en su sección.
+\usepackage[T1]{fontenc} % Required for accented characters
+\newenvironment{allintypewriter}{\ttfamily}{\par}
+\setlength{\parindent}{0pt}
+\parskip=8pt
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\renewcommand\@biblabel[1]{\textbf{#1.}} % Change the square brackets for each bibliography item from '[1]' to '1.'
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+\newcommand{\imagen}[2]{\begin{center} \includegraphics[width=90mm]{#1} \\#2 \end{center}}
+\newcommand{\RFC}[1]{\href{https://www.ietf.org/rfc/rfc#1.txt}{RFC-#1}}
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{center} % Center align
+{\Huge\@title} % Increase the font size of the title
+\end{center}
+
+\vspace{20pt} % Some vertical space between the title and author name
+
+\begin{flushright} % Right align
+{\large\@author} % Author name
+\\\@date % Date
+
+\vspace{40pt} % Some vertical space between the author block and abstract
+\end{flushright}
+}
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Instalación y configuración de Servicios}\\ % Title
+\vspace{20 pt}
+Ingeniería de Servidores \\Memoria de la Práctica 2} % Subtitle
+
+\author{\textsc{Adrián Portillo Sánchez} % Author
+\\{\textit{Universidad de Granada}}} % Institution
+
+\date{\today} % Date
+
+%----------------------------------------------------------------------------------------
+\setcounter{secnumdepth}{0}
+
+\begin{document}
+\maketitle
+\pagebreak
+\tableofcontents
+\listoffigures
+\pagebreak
+
+\section{Cuestión 1}
+\textbf{Liste los argumentos de yum para instalar, buscar y eliminar paquetes.}\\
+
+$^{[1]}$ Yum es un gestor de paquetes basado en rpm (Gestor de paquetes para sistemas como redhat, centOS, fedora...) que nos permite instalar, buscar, borrar paquetes además de otras entradas que permiten listar paquetes instalados o que se encuentran a disposición del usuario. Los argumentos necesarios para realizar las distintas opciones permitidas serán:
+\begin{itemize}
+\item \textit{\$yum install [nombrepkg]}: Permite instalar el paquete indicado, pide confirmación al usuario.(Para hacer que no pida confirmación, añadir la opción -y).
+\item \textit{\$yum remove [nombrepkg]}: Elimina el paquete indicado, es necesaria confirmación del usuario.
+\item \textit{\$yum list installed}: Permite listar los paquetes que se encuentran instalados en el sistema.
+\item \textit{\$yum list available}: Permite listar los paquetes que pueden ser instalados en el sistema.
+\item \textit{\$yum search [nombrepkg]}: Busca un paquete instalado o que se puedan instalar, puede funcionar solo con partes del nombre del paquete.
+
+Por ejemplo, si quisieramos instalar el paquete php sin confirmación haríamos:
+\begin{verbatim}
+yum -y install php
+\end{verbatim}
+
+\pagebreak
+
+Un ejemplo de búsqueda de paquetes en yum sería:
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{yum.png} 
+\caption{Buscando paquetes que incluyan php en su nombre.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\end{itemize}
+
+\pagebreak
+
+\section{Cuestión 2}
+\textbf{¿Qué ha de hacer para que yum pueda tener acceso a Internet?(Pistas: archivo de configuración en \textit{/etc}, proxy: stargate.ugr.es:3128). ¿Cómo añadimos un nuevo repositorio?}\\
+
+$^{[2]}$ Por defecto, Yum accede a los repositorios en la red a través de HTTP, esto se puede hacer a través de un proxy, ya que todas las operaciones de yum se hacen a través de HTTP/1.1, por tanto son compatibles con todos los servidores proxy que hagan uso de este estándar. Para ello se debe añadir al archivo yum.conf que se encuentra en \textit{/etc} las siguientes líneas:
+
+\begin{verbatim}
+# The proxy server - proxy server:port number 
+proxy=http://stargate.ugr.es:3128 
+# The account details for yum connections 
+proxy_username=
+proxy_password=
+\end{verbatim}
+No es necesario usar los parámetros de usuario y contraseña por lo que se pueden dejar en blanco.\\
+$^{[3]}$ Para añadir un repositorio se puede hacer de varias formas, la primera es dirigirse al directorio \textit{/etc/yum.repos.d/} y colocar ahí los archivos con esta estructura: [nombre\_repositorio].repo, la segunda es utilizar  la herramienta llamada \textit{yum-config-manager} que agrega los repositorios directamente haciendo uso del url del mismo, de la siguiente forma:
+\begin{verbatim}
+\$yum-config-manager --add-repo repository_url
+\end{verbatim}
+
+Si quisieramos añadir el repositorio KDE Redhat podríamos descargarlo de la siguiente url: \url{http://apt.kde-redhat.org/apt/kde-redhat/fedora/kde.repo} y añadir a /etc/yum.repos.d/ el archivo kde.repo descargado.\\
+O también podríamos directamente ejecutar el comando:
+\begin{verbatim}
+\$yum-config-manager --add-repo=http://apt.kde-redhat.org/apt/kde-redhat/fedora/kde.repo
+\end{verbatim}
+
+\pagebreak
+
+\section{Cuestión 3}
+\textbf{Indique el comando para buscar un paquete en un repositorio y el correspondiente para instalarlo. (Pista: man apt-get ; man apt-cache)}\\
+$^{[4]}$ Apt es otra aplicación de gestión de paquetes como yum pero se usa en distribuciones basadas en debian, las ordenes para buscar e instalar estos paquetes son las siguientes:
+\begin{itemize}
+\item \textit{\$apt-cache show [nombrepkg]}: Nos muestra si el paquete en cuestión existe o no en el sistema, es decir te retorna una respuesta de verdadero o falso.
+\item \textit{\$apt-cache search [exp. regular]}: Nos permite realizar una consulta sobre el sistema para saber los paquetes que se encuentran disponibles para su instalación.
+\item \textit{\$apt-cache policy [nombrepkg]}: Se encarga de a partir de un nombre de paquete dado, comprobar que dependencia o repositorio lo contiene para su posterior obtención.
+\item \textit{\$apt-get install [nombrepkg]}: Se encarga de instalar un paquete solo si este se encuentra en algún repositorio dentro de \textit{sources.list.}
+\end{itemize}
+
+Por ejemplo si quisieramos instalar el paquete nautilus, ejecutaríamos:
+\begin{verbatim}
+\$sudo apt-get install nautilus
+\end{verbatim}
+
+\pagebreak
+
+Vamos a ver por ejemplo una búsqueda de paquetes y una comprobación de dependencias con apt:
+\begin{figure}[h]
+\centering 
+\includegraphics[width=1\linewidth]{apt1.png} 
+\caption{Ejecutando una búsqueda en apt para 'nautilus'.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=1\linewidth]{apt2.png} 
+\caption{Ejecutando la búsqueda de dependencias en apt para 'nautilus'.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 4}
+\textbf{Indiqué qué ha modificado para que apt pueda acceder a los servidores de paquetes a través del proxy ¿Cómo añadimos un nuevo repositorio?}\\
+
+$^{[5]}$ Para acceder a los repositorios a través de un proxy debemos dirigirnos al archivo \textit{apt.conf} en el directorio \textit{/etc/apt/} y añadir al archivo la siguiente linea:
+\begin{verbatim}
+Acquire::http::Proxy "http://usuario:password@proxy.servidor.org:puerto";
+\end{verbatim}
+Tambiés es posible llevarlo a cabo a través de la modificación de una variable global llamada \textit{http\_proxy}, de la forma siguiente:
+\begin{verbatim}
+\$export http_proxy=http://usuario:password@proxy.servidor.org:puerto/
+\end{verbatim}
+
+En nuestro caso haríamos:
+\begin{verbatim}
+\$Acquire::http::Proxy "http://:@stargate.ugr.es:3128"
+\end{verbatim}
+o bien:
+\begin{verbatim}
+\$export http_proxy=http://:@stargate.ugr.es:3128/
+\end{verbatim}
+
+
+$^{[6]}$ Para añadir un nuevo repositorio tenemos varias opciones, una de ellas es localizar el archivo \textit{/etc/apt/sources.list}, y añadir a dicho archivo los repositorios que queramos, o bien podemos hacer uso del siguiente comando:
+\begin{verbatim}
+\$add-apt-repository ppa:[usuario]/[nombre_repo]
+\end{verbatim}
+o bien
+\begin{verbatim}
+\$add-apt-repository "deb [url_repo][distro][componentes]"
+\end{verbatim}
+
+Por ejemplo, para instalar el repositorio de actualizaciones de seguridad de wheezy, añadiremos al archivo /etc/apt/sources.list, las lineas:
+\begin{verbatim}
+deb http://security.debian.org/ wheezy/updates main contrib
+deb-src http://security.debian.org/ wheezy/updates main contrib
+\end{verbatim}
+
+\section{Cuestión Opcional 1.}
+\textbf{¿Qué gestores utiliza OpenSuse? (Pista: \url{http://es.opensuse.org/Gesti\%C3\%B3n_de_paquetes})}\\
+
+$^{[7]}$ OpenSuse utiliza Libzypp como sistema de gestión de paquetes. Se puede utilizar como gestor gráfico de paquetes con YaST que, junto con SaX, se encuentra entre las herramientas más potentes y de uso más sencillo para la administración de sistemas Linux; y como gestor desde línea de comandos se puede utilizar Zypper, con las siguientes opciones:
+\begin{verbatim}
+
+\$zypper lp                  # Para ver los parches que están disponibles
+\$zypper patch               # Para aplicar los parches
+\$zypper se [nombrepkg]      # Para buscar 
+\$zypper rm [nombrepkg]      # Para desinstalar
+\$zypper in [nombrepkg]      # Para instalar
+\$zypper in [nombrepkg]*     # Para instalar todos los paquetes
+                             # correspondientes al paquete de nombre "nombrepkg"
+\$zypper up                  # Para actualizar todos los paquetes
+                             # a la versión mas reciente posible
+\end{verbatim}
+
+
+
+\section{Cuestión 5}
+\textbf{¿Qué diferencia hay entre telnet y ssh?}\\
+
+$^{[8]}$ Ambos telnet y ssh son protocolos de acceso a máquinas remotas a traves de una red, y permiten controlar dicha máquina a través de un intérprete de comandos, la principal diferencia entre ellos es la seguridad, ya que aunque ssh funciona de manera parecida a telnet, este usa técnicas de cifrado sobre la información que está viajando por el medio de comunicación , haciendo que estos datos no sean legibles para evitar problemas como man in the middle (una tercera persona que intercepte una red entre dos nodos y pueda modificar los paquetes tcp). Así ssh es mucho más seguro para evitar el robo de información privada como podrían ser contraseñas o cuentas bancarias.
+
+
+\section{Cuestión 6}
+\textbf{¿Para qué sirve la opción -X? Ejecute remotamente, es decir, desde la máquina anfitriona (si tiene Linux) o desde la otra máquina virtual, el comando gedit en una sesión abierta con ssh. ¿Qué ocurre?}\\
+
+$^{[9]}$La opción -X habilita el "X11 forwarding", que permite ejecutar aplicaciones gráficas en la máquina remota, pero visualizando la interfaz gráfica en el escritorio local, no siendo necesario ni que la máquina remota disponga de un gestor de ventanas.
+
+Para probarlo, primero desde nuestra máquina virtual nos conectamos a la máquina otra virtual remota con ssh y la opción -X (siendo para el ejemplo nuestro de usuario 'adri' y la dirección de la máquina remota '192.168.147.133').
+
+\begin{verbatim}
+\$ssh -X adri@192.168.147.133
+\end{verbatim}
+ 
+Se nos avisará que la autenticación del host remoto no puede ser comprobada, confirmamos que aun así queremos conectarnos e introducimos la contraseña de nuestro usuario. Una vez dentro, si ejecutamos el comando gedit veremos como aparece la interfaz gráfica en nuestra máquina anfitriona, pero si vemos los archivos accesibles comprobaremos que son los almacenados en la máquina remota.
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{pruebassh1.png} 
+\caption{Utilizando ssh -X y abriendo gedit.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{pruebassh2.png} 
+\caption{Guardando la prueba.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{pruebassh3.png} 
+\caption{Comprobando los resultados.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+
+
+\section{Cuestión 7}
+\textbf{Muestre la secuencia de comandos y las modificaciones a los archivos correspondientes para permitir acceder a la consola remota sin introducir la contraseña. (Pistas: ssh-keygen, ssh-copy-id).}\\
+
+$^{[10]}$Para poder acceder a la consola remota sin introducir contraseña, primero deberemos generar localmente una clave de autenticación para la autenticación de conexiones ssh en nuestro sistema, el sistema de encriptación usado es RSA, por lo que generamos la clave para ese tipo de identificación:
+
+\begin{verbatim}
+\$ ssh-keygen -t rsa
+\end{verbatim}
+
+Indicaremos en que directorio de nuestra máquina local queremos que se cree el archivo de la clave, dejando la contraseña en blanco cuando nos la solicite, para así poder acceder sin contraseña.
+
+$^{[11]}$Ahora deberemos copiar la clave al servidor para poder realizar con él la conexión sin contraseña.
+
+\begin{verbatim}
+\$ ssh-copy-id -i /home/usuario/.ssh/id_rsa.pub usuario@[Direccion_remota]
+\end{verbatim}
+
+Deberemos introducir la contraseña del usuario remoto esta vez, pero no a partir de ahora, podremos conectarnos directamente con ese nombre de usuario a la máquina remota mediante ssh sin tener que introducir ninguna contraseña.
+
+\pagebreak
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=1\linewidth]{sshkey.png} 
+\caption{Realizando el proceso en mi máquina.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 8}
+\textbf{¿Qué archivo es el que contiene la configuración de sshd?¿Qué parámetro hay que modificar para evitar que el usuario root acceda? Cambie el puerto por defecto y compruebe que puede acceder. Compruebe que modificando el archivo correspondiente permite acceder con o sin contraseña al servidor.}\\
+
+$^{[12]}$ El archivo que contiene la configuración de sshd es /etc/ssh/sshd\_config podremos cambiar la configuración alterando los diferentes valores en las líneas del archivo.\\
+
+Para evitar que el usuario root acceda añadimos la línea:
+\begin{verbatim}
+PermitRootLogin no
+\end{verbatim}
+Para cambiar el puerto por defecto (por ejemplo, al 126) modificamos la línea:
+\begin{verbatim}
+Port 126
+\end{verbatim}
+Para permitir acceder con o sin contraseña cambiamos la línea:
+\begin{verbatim}
+PasswordAuthentication no
+\end{verbatim}
+Lo probaré en mi máquina host(para que los cambios hagan efecto se debe reiniciar el servidor):
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=1\linewidth]{sshconfig.png} 
+\caption{Cambiando la configuración de sshd.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 9}
+\textbf{ Indique si es necesario reiniciar el servicio ¿Cómo se reinicia un servicio en Ubuntu? ¿y en CentOS? Muestre la secuencia de comandos para hacerlo.}\\
+
+$^{[13]}$Sí, porque el servicio se lanza con la configuración que se le de, y hasta que no se vuelva a iniciar no lee las configuraciones de nuevo por lo que no se aplicarían hasta que no se reinicie el servicio. En la figura 5 podemos ver como realizo esta acción en ubuntu.
+
+Para reiniciar el servicio en Ubuntu se escribe:
+\begin{verbatim}
+\$/etc/init.d/[nombre_servicio] restart
+\end{verbatim}
+o
+\begin{verbatim}
+\$service [nombre_servicio] restart #en ubuntu el servicio es sshd
+\end{verbatim}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=1\linewidth]{restart1.png} 
+\caption{Reiniciando ssh en Ubuntu} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+Para reiniciar el servicio en CentOS se escribe:
+\begin{verbatim}
+\$service [nombre_servicio] restart
+\end{verbatim}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=1\linewidth]{restart2.png} 
+\caption{Reiniciando ssh en CentOS} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 10}
+\textbf{Muestre los comandos que ha utilizado en Ubuntu Server y en CentOS (aunque en este último puede utilizar la GUI, en tal caso, realice capturas de pantalla)}\\
+
+$^{[14]}$Para instalar Apache + MySQL + PHP en Ubuntu seguimos los siguientes pasos:
+\begin{verbatim}
+\$sudo apt -get update                              #Actualizamos los repositorios.
+\$sudo apt-get install apache2                      #Apache
+\$sudo apt-get install php mysql-server             #MySQL
+  mysql-client php5-mysql
+\$sudo mysql_install_db                             #Creamos la base de datos.
+\$apt-get install php5 libapache2-mod-php5          #PHP
+  php5-cli php5-mysql
+\$sudo service apache2 restart                      #Reiniciamos el servicio apache
+                                                    #para que funcione con php
+\end{verbatim}
+
+También podemos usar tasksel
+\begin{verbatim}
+\$sudo apt-get install tasksel
+\$sudo tasksel install lamp-server
+\end{verbatim}
+
+$^{[15]}$Para instalar Apache + MySQL + PHP en CentOS seguimos los siguientes pasos:
+\begin{verbatim}
+\$yum install httpd                         #Apache
+\$sudo systemctl start httpd.service        #Iniciamos el servicio
+\$sudo yum install mariadb-server mariadb   #MariaDB
+\$sudo systemctl start mariadb              #Iniciamos el servicio  
+\$sudo systemctl enable mariadb.service     #Hacemos que se inicie al iniciar
+\$sudo yum install php php-mysql            #PHP
+\$sudo systemctl restart httpd.service      #Reiniciamos el servicio apache para
+                                            #que funcione con php
+\end{verbatim}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{apachecentos.png} 
+\caption{Cuando todo se ha realizado correctamente veremos esta pantalla en \url{http://localhost}.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 11}
+\textbf{Enumere otros servidores web y las páginas de sus proyectos (mínimo 3 sin considerar Apache, IIS ni nginx).}\\
+(He tomado tres servidores de lo que aparecen en: \url{https://es.wikipedia.org/wiki/Servidor_web} y he buscado información sobre ellos en su página oficial.)
+\begin{itemize}
+\item \textbf{Lighttpd : \url{www.lighttpd.net/}} Un servidor web ligero y de código abierto, con licencia BSD. Tiene una huella muy baja en la memoria en comparación con otros servidores web, una gestión efectiva de la carga de cpu y varias funciones como: FastCGI, SCGI, Auth, Output-Compression, URL-Rewriting y otros.
+\item \textbf{Cherokee : \url{http://cherokee-project.com/}} Servidor de código abierto multiplataforma ligero y fácil de usar diseñado para las resistir las nuevas generaciones de aplicaciones web seguras. Soporta diversas funcionalidades como: FastCGI, SCGI, PHP, uWSGI, SSI, etc.
+\item \textbf{Tomcat : \url{http://tomcat.apache.org/}} Aunque tomcat no es un servidor web, si no un contenedor web, puede funcionar como tal, posee la  licencia Apache2 y es una implementación de las tecnologías de Java Servlet, JavaServer Pages, Java Expression Language y Java WebSocket. Da soporte a varias aplicaciones web a gran escala con funcionalidades críticas de diversas industrias y organizaciones como: \url{www.walmart.com} \url{http://dev.hubspot.com/} o \url{http://www.starhost.com.br/}$^{[16]}$
+\end{itemize}
+
+\pagebreak
+
+\section{Cuestión 12}
+\textbf{Compruebe que el servicio está funcionando accediendo a la MV a través de la anfitriona.}\\
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{iis1.png} 
+\caption{Seleccionamos IIS como nuevo servicio en Windows Server.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{iis2.png} 
+\caption{Resultados de la instalación.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{iis3.png} 
+\caption{Comprobamos que funciona en la MV con \url{http://localhost.}}
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{iis4.png} 
+\caption{Miramos cuál es la ip local de nuestra máquina virtual}
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{iis5.png} 
+\caption{Ponemos dicha IP en el navegador de nuestra máquina anfitriona para comprobar que el servicio funciona correctamente.}
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión Opcional 4}
+\textbf{Realice la instalación de uno de estos dos “web containers” y pruebe su ejecución.}\\
+Instalaré Tomcat en Windows Server 2012 de 64 bits.\\
+Para ello vamos a la página oficial y a la pestaña de descargas, en ella descargamos el archivo '32-bit/64-bit Windows Service Installer'.
+
+Es un instalador de Windows normal, pasos importantes serán:
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{tomcat1.png} 
+\caption{Aquí definimos los puertos del servidor.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+Tras esto, seguimos con pasos generales de un instalador de Windows.\\
+Una vez instalado abrimos la configuración y podemos ver que el servicio está iniciado, también podremos verlo en el administrador de servicios de Windows:
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{tomcat2.png} 
+\caption{Comprobamos que el servidor funciona.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 13}
+\textbf{Muestre un ejemplo de uso del comando (p.ej.\url{http://fedoraproject.org/wiki/VMWare})}\\
+
+$^{[17]}$Este comando aplica un parche en un fichero .patch que contiene las diferencias que queremos aplicar y se utiliza de la siguiente manera:
+\begin{verbatim}
+\$patch -p0 < [nombre_parche].patch
+\end{verbatim}
+ó
+\begin{verbatim}
+\$patch -p0 -i [nombre_parche].patch
+\end{verbatim}
+
+Por ejemplo, teniendo un programa programa.cpp (en su versión n-1), si quisiéramos añadir cambios (pasar a la versión n) al programa en todos los usuarios que lo posean sin tener que sustituir el programa (puede que, por ejemplo, el programa sea muy grande para ello) ejecutaríamos:
+\begin{verbatim}
+diff -u programa_[vn-1].cpp programa_[vn].txt > actualizacion_programa.patch
+patch -p0 < actualizacion_programa.patch #Aplica el parche en la ruta actual
+\end{verbatim}
+
+\section{Cuestión 14}
+\textbf{Realice la instalación de esta aplicación y pruebe a modificar algún parámetro de algún servicio. Muestre las capturas de pantalla pertinentes así como el proceso de instalación.}\\
+
+$^{[18]}$Descargamos el paquete debian de la página oficial en \url{http://sourceforge.net/projects/webadmin/files/webmin/1.770/webmin_1.770_all.deb/download?use_mirror=kent}
+y ejecutamos el comando:
+\begin{verbatim}
+\$sudo dpkg -i webmin_1.710_all.deb
+\end{verbatim}
+
+Como nos da error de dependencias ejecutamos:
+\begin{verbatim}
+\$sudo apt-get install perl libnet-ssleay-perl openssl 
+  libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions
+\end{verbatim}
+Y volvemos a ejecutar el comando de instalación dpkg.
+
+\pagebreak
+
+Ponemos en el navegador https://ubuntu:10000/ y nos pedirá loguear en el sistema:
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{webmin1.png} 
+\caption{Logueando en webmin.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+Se nos abre la siguiente interfaz de usuario:
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{webmin2.png} 
+\caption{Interfaz de webmin.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+Cambiamos por ejemplo un parámetro del servidor web apache en el que cuando sale el error 404 redirige a una imagen de error 404, para ello, accedemos a servers $\rightarrow$ apache webserver $\rightarrow$ default server $\rightarrow$ error handling, e introducimos lo siguiente y le damos a 'apply changes':
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{webmin3.png} 
+\caption{Cambiando el manejo de errores del servidor web apache en webmin.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+También cambiaremos el parámetro de tamaño máximo de subida al servidor y de localización máxima de memoria, para ello accedemos a Others $\rightarrow$ PHP configuration $\rightarrow$ Resource limits y cambiamos los valores de Maximum memory allocation y Maximun HTTP post size:
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{webmin4.png} 
+\caption{Cambiando los límites de recursos de php en webmin.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 15}
+\textbf{Instale phpMyAdmin, indique cómo lo ha realizado y muestre algunas capturas de pantalla. Configure PHP para poder importar BDs
+mayores de 8MiB (límite por defecto). Indique cómo ha realizado el proceso y muestre capturas de pantalla.}\\
+
+$^{[19]}$Para instalar phpMyAdmin usamos el comando:
+\begin{verbatim}
+\$sudo apt-get install phpMyAdmin
+\end{verbatim}
+Se nos preguntará que elijamos un servidor de entre los que tenemos instalados, elegimos Apache2
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{php1.png} 
+\caption{Eligiendo servidor para phpMyAdmin.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+Para la configuración básica le damos a no, pues no nos interesa
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{php2.png} 
+\caption{Configuración inicial de phpMyAdmin.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+$^{[20]}$Para configurar phpMyAdmin para que pueda importar bases mayores de 8MiB vamos al archivo de configuración de phpMyAdmin con:
+\begin{verbatim}
+sudo gedit /etc/phpmyadmin/config.inc.php
+\end{verbatim}
+
+y añadimos la línea: 
+\begin{verbatim}
+$cfg['Servers'][$i]['MemoryLimit'] = '32M'  #Por ejemplo, 32 Megabytes.
+\end{verbatim}
+
+
+\pagebreak
+
+\section{Cuestión 16}
+\textbf{Viste al menos una de las webs de los software mencionados y pruebe las demos que ofrecen realizando capturas de pantalla y comentando qué está realizando.}\\
+
+He escogido para la prueba directadmin: \url{http://www.directadmin.com/}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{directadmin1.png} 
+\caption{Pantalla principal de Direct Admin} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{directadmin2.png} 
+\caption{Monitorización de usuarios.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{directadmin3.png} 
+\caption{Monitorización de servicios.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{directadmin4.png} 
+\caption{Monitorización de procesos.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+\section{Cuestión 17}
+\textbf{Ejecute los ejemplos de find, grep y escriba el script que haga uso de sed para cambiar la configuración de ssh y reiniciar el servicio.}\\
+
+$^{[21]}$Por ejemplo para find usaré un comando para extraer toda la música de mi carpeta personal y copiarla en la carpeta llamada Música:
+\begin{verbatim}
+\$find /home/adri/ -name '.*mp3' -exec mv {} ~/Música \;
+\end{verbatim}
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{find.png} 
+\caption{Prueba de la orden find.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+\pagebreak
+
+$^{[22]}$Como vemos la orden ps -Af saca una cantidad de información ilegible
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{grep1.png} 
+\caption{Ejecución de la orden ps -Af.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+Para encontrar datos entre tanta información usaremos grep de la siguiente forma:
+\begin{verbatim}
+ps -Af | grep firefox   #Por ejemplo buscamos firefox.
+\end{verbatim}
+
+Y ahora la información es mucho más legible
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{grep2.png} 
+\caption{Ejecución de la orden ps -Af con grep.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+
+
+$^{[23]}$Para cambiar con sed por ejemplo el puerto de ssh un script sería:
+\begin{verbatim}
+#!/bin/bash
+sed -i 's/Port 22/Port 126/' /etc/ssh/sshd_config 
+service ssh restart
+\end{verbatim}
+
+\pagebreak
+
+\section{Cuestión opcional 6}
+\textbf{Muestre un ejemplo de uso para awk.}\\
+
+$^{[24]}$El comando awk nos permite buscar en ficheros determinados patrones que le demos, para usarlo hacemos:
+\begin{verbatim}
+awk '{accion/patron}' fichero
+\end{verbatim}
+
+
+Si ejecutamos la orden:
+\begin{verbatim}
+awk '{print \$1*\$2}' fichero
+\end{verbatim}
+El resultado será el producto de los elementos de la primera columna por los elementos de la segunda columna.\\
+
+Por ejemplo una ejecución con este modo ejemplificado sería así:
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{awk.png} 
+\caption{Probando awk con la función descrita.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+
+\pagebreak
+
+\section{Cuestión 18}
+\textbf{Escriba el script para cambiar el acceso a ssh usando PHP o Python.}\\
+
+$^{[25]}$ $^{[26]}$Haríamos un script.py con la orden
+\begin{verbatim}
+gedit script.py
+\end{verbatim}
+
+\begin{verbatim}
+import re
+f = open('etc/ssh/sshd_config')
+datos = f.read()
+f.close()
+datos2 = re.sub(
+    '#?.*PasswordAuthentication.*yes',
+    'PasswordAuthentication no',
+    datos
+)
+f2 = open('/etc/ssh/sshd_config','w')
+f2.write(datos2)
+f2.close()
+\end{verbatim}
+
+Lo ejecutaríamos con:
+\begin{verbatim}
+sudo python script.py
+\end{verbatim}
+
+\pagebreak
+
+\section{Cuestión 19}
+\textbf{Abra una consola de Powershell y pruebe a parar un programa en ejecución (p.ej), realice capturas de pantalla y comente lo que muestra.}\\
+
+$^{[27]}$Para listar los procesos podemos poner 
+\begin{verbatim}
+get-process [nombre_proc]*
+\end{verbatim}
+
+Nos fijamos en la columna id y ponemos:
+
+\begin{verbatim}
+stop-process -id [id_proceso] 
+\end{verbatim}
+
+En este caso pararemos el proceso 'explorer', que como podemos ver se reinicia automáticamente, y trataremos de parar el proceso 'server manager', lo cual el sistema no nos dejará hacer, porque está controlando el funcionamiento de nuestro servidor.
+
+\begin{figure}[h]
+\centering 
+\includegraphics[width=0.8\linewidth]{powershell.png} 
+\caption{Parando un proceso en powershell.} 
+\vspace{-0.5cm}
+\label{contexto:figura} 
+\end{figure}
+
+
+\pagebreak
+
+
+\begin{thebibliography}{X}
+\bibitem{Baz} Cuestión 1:\\ 
+ \textbf{1.} \$man yum
+\bibitem{Baz} Cuestión 2:\\ 
+ \textbf{2.}\url{https://docs.fedoraproject.org/es-ES/Fedora_Core/4/html/Software_Management_Guide/sn-yum-proxy-server.html}\\
+ \textbf{3.}\url{https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/sec-Managing_Yum_Repositories.html}
+  \bibitem{Baz} Cuestión 3:\\ 
+ \textbf{4.} \$man apt-get \\
+             \$man apt-cache
+  \bibitem{Baz} Cuestión 4:\\ 
+  \textbf{5.}\url{http://www.rafalinux.com/?p=904}\\
+  \textbf{6.}\url{http://manpages.ubuntu.com/manpages/hardy/es/man5/apt.conf.5.html}
+  \bibitem{Baz} Cuestión Opcional 1:\\ 
+  \textbf{7.}\url{https://es.opensuse.org/Gesti\%C3\%B3n_de_paquetes} y mi uso propio de openSuse
+ \bibitem{Baz} Cuestión 5:\\ 
+ \textbf{8.} \$man ssh\_config
+  \bibitem{Baz} Cuestión 6:\\ 
+ \textbf{9.}\url{https://www.freebsd.org/cgi/man.cgi?query=ssh&sektion=1} \\o \$man ssh
+    \bibitem{Baz} Cuestión 7:\\ 
+  \textbf{10.} \$man ssh-keygen \\
+  \textbf{11.} \$man ssh-copy-id
+  \bibitem{Baz} Cuestión 8:\\ 
+ \textbf{12.} \$ man ssh\_config
+\bibitem{Baz} Cuestión 9:\\ 
+ \textbf{13.}\url{http://www.alcancelibre.org/staticpages/index.php/10-como-openssh}\\
+ \bibitem{Baz} Cuestión 10:\\ 
+ \textbf{14.}\url{https://www.digitalocean.com/community/tutorials/como-instalar-linux-apache-mysql-php-lamp-en-ubuntu-14-04-es}\\
+ \textbf{15.}\url{https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-centos-7}
+ \bibitem{Baz} Cuestión 11:\\ 
+ \textbf{16.}\url{http://wiki.apache.org/tomcat/PoweredBy}
+  \bibitem{Baz} Cuestión 12:\\ 
+ Conocimiento propio.
+ \bibitem{Baz} Cuestión 13:\\ 
+ \textbf{17.}\$man patch
+ \bibitem{Baz} Cuestión 14:\\ 
+ \textbf{18.}\url{https://sliceoflinux.wordpress.com/2009/09/07/instalar-webmin-en-ubuntu-paso-a-paso/}
+ \bibitem{Baz} Cuestión 15:\\ 
+ \textbf{19.}\url{http://docs.phpmyadmin.net/es/latest/setup.html}\\
+ \textbf{10.}\url{http://docs.phpmyadmin.net/es/latest/config.html}
+ \bibitem{Baz} Cuestión 17:\\ 
+ \textbf{21.}\$man find\\
+ \textbf{22.}\$man grep\\
+ \textbf{23.}\$man sed
+ \bibitem{Baz} Cuestión opcional 6:\\
+ \$man awk\\
+ \textbf{24.}\url{https://www.hscripts.com/es/tutoriales/linux-commands/awk.html}
+ \bibitem{Baz} Cuestión 18:\\
+ \textbf{25.}\url{http://www.bogotobogo.com/python/python_ssh_remote_run.php}\\
+ \textbf{26.}\url{http://lignux.com/crear-y-ejecutar-scripts-python/}
+ \bibitem{Baz} Cuestión 19:\\
+ \textbf{27.}\url{https://technet.microsoft.com/en-us/library/ee177004.aspx?f=255&MSPPError=-2147217396}
+ 
+ 
+\end{thebibliography}
+
+\end{document}
